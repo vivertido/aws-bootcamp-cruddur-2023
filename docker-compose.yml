@@ -7,6 +7,8 @@ services:
       OTEL_SERVICE_NAME: '${HONEYCOMB_SERVICE_NAME}'
       OTEL_EXPORTER_OTLP_ENDPOINT: "https://api.honeycomb.io"
       OTEL_EXPORTER_OTLP_HEADERS: "x-honeycomb-team=${HONEYCOMB_API_KEY}"
+      HONEYCOMB_API_KEY: 'VMMhfICyjAZiyTs9dlu5JB'
+     
     build: ./backend-flask 
     ports:
       - "4567:4567"
