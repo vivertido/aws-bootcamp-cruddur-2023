@@ -1,6 +1,11 @@
 from datetime import datetime, timedelta, timezone
+from aws_xray_sdk.core import xray_recorder
+
 class UserActivities:
   def run(user_handle):
+
+    segment = xray_recorder.begin_segment('show-home-feed')
+
     model = {
       'errors': None,
       'data': None

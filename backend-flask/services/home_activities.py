@@ -1,11 +1,19 @@
 from datetime import datetime, timedelta, timezone
+from aws_xray_sdk.core import xray_recorder
+
 class HomeActivities:
+
+  #@xray_recorder.capture('activities-home')
   def run():
     now = datetime.now(timezone.utc).astimezone()
+
+    segment = xray_recorder.begin_segment('show-home-feed')
+
+
     results = [{
       'uuid': '68f126b0-1ceb-4a33-88be-d90fa7109eee',
       'handle':  'Andrew Brown',
-      'message': 'Hey hey hey!!!!!!!!!',
+      'message': 'Hello world',
       'created_at': (now - timedelta(days=2)).isoformat(),
       'expires_at': (now + timedelta(days=5)).isoformat(),
       'likes_count': 5,
@@ -15,7 +23,7 @@ class HomeActivities:
         'uuid': '26e12864-1c26-5c3a-9658-97a10f8fea67',
         'reply_to_activity_uuid': '68f126b0-1ceb-4a33-88be-d90fa7109eee',
         'handle':  'Worf',
-        'message': 'This post has no honor!',
+        'message': 'This post has no honor',
         'likes_count': 0,
         'replies_count': 0,
         'reposts_count': 0,
@@ -25,7 +33,7 @@ class HomeActivities:
     {
       'uuid': '66e12864-8c26-4c3a-9658-95a10f8fea67',
       'handle':  'Pacoooo',
-      'message': 'I am out of time',
+      'message': 'I like this app',
       'created_at': (now - timedelta(days=7)).isoformat(),
       'expires_at': (now + timedelta(days=9)).isoformat(),
       'likes': 0,
@@ -41,4 +49,11 @@ class HomeActivities:
       'replies': []
     }
     ]
+    activity_data = {
+      "now": now.isoformat(),
+      "result_count": len(results)
+
+    }
+    segment.put_metadata('activity-stats', activity_data, 'namespace')
+   # xray_recorder.end_segment()
     return results
