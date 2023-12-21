@@ -7,6 +7,7 @@ class CreateReply:
       'data': None
     }
 
+
     if user_handle == None or len(user_handle) < 1:
       model['errors'] = ['user_handle_blank']
 
@@ -30,7 +31,7 @@ class CreateReply:
       now = datetime.now(timezone.utc).astimezone()
       model['data'] = {
         'uuid': uuid.uuid4(),
-        'display_name': 'Andrew Brown',
+        'display_name': 'Andrew Town',
         'handle':  user_handle,
         'message': message,
         'created_at': now.isoformat(),
