@@ -19,6 +19,7 @@ export default function HomeFeedPage() {
   const dataFetchedRef = React.useRef(false);
 
   const loadData = async () => {
+    console.log("Loading data in Home Feed Page.")
     try {
       const backend_url = `${process.env.REACT_APP_BACKEND_URL}/api/activities/home`
       const res = await fetch(backend_url, {
@@ -26,6 +27,7 @@ export default function HomeFeedPage() {
       });
       let resJson = await res.json();
       if (res.status === 200) {
+        console.log(resJson)
         setActivities(resJson)
       } else {
         console.log(res)
