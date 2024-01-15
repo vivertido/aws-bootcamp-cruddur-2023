@@ -12,6 +12,7 @@ export default function DesktopNavigation(props) {
   let messagesLink;
   let profileLink;
   if (props.user) {
+    console.log("Welcome logged-in user!")
     button = <CrudButton setPopped={props.setPopped} />;
     profile = <ProfileInfo user={props.user} />;
     notificationsLink = <DesktopNavigationLink 

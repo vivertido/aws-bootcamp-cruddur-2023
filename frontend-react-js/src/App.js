@@ -37,7 +37,7 @@ Amplify.configure({
 
   "AWS_PROJECT_REGION": process.env.REACT_APP_AWS_PROJECT_REGION,
   "AWS_USER_POOLS_ID": process.env.REACT_APP_AWS_USER_POOLS_ID,
- // "aws_cognito_region": process.env.REACT_APP_AWS_COGNITO_REGION,
+  "AWS_COGNITO_REGION": process.env.REACT_APP_AWS_COGNITO_REGION,
   "AWS_USER_POOLS_WEB_CLIENT_ID": process.env.REACT_APP_CLIENT_ID,
   "oauth": {},
   userPoolClientId: process.env.REACT_APP_CLIENT_ID,
