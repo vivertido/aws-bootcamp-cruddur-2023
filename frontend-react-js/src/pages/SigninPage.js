@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 // [TODO] Authenication
 //import Cookies from 'js-cookie'
 import { Auth } from 'aws-amplify'
+import { signIn } from 'aws-amplify/auth';
+
 
 export default function SigninPage() {
 
@@ -14,29 +16,43 @@ export default function SigninPage() {
   const [errors, setErrors] = React.useState('');
   //const [cognitoErrors, setCognitoErrors] = React.useState('');
 
-  const onsubmit = async (event) => {
+
+
+  async function onsubmit(event, { username, password }) {
     setErrors('')
     event.preventDefault();
     try {
-      Auth.signIn(email, password)
-        .then(user => {
-          localStorage.setItem("access_token", user.signInUserSession.accessToken.jwtToken)
-          window.location.href = "/"
-        })
-        .catch(err => { console.log('Error!', err) });
+      const { isSignedIn, nextStep } = await signIn({ email, password });
     } catch (error) {
+      console.log('error signing in', error);
       if (error.code == 'UserNotConfirmedException') {
-        window.location.href = "/confirm"
-      }
-      console.log("Errors: ")
-      console.log(error.message)
-      console.log("Done showing errors")
-      setErrors(error.message)
+              window.location.href = "/confirm"
+            }
     }
-    return false
   }
 
-  
+
+  // const onsubmit = async (event) => {
+  //   setErrors('')
+  //   event.preventDefault();
+  //   try {
+  //     Auth.signIn(email, password)
+  //       .then(user => {
+  //         localStorage.setItem("access_token", user.signInUserSession.accessToken.jwtToken)
+  //         window.location.href = "/"
+  //       })
+  //       .catch(err => { console.log('Error!', err) });
+  //   } catch (error) {
+  //     if (error.code == 'UserNotConfirmedException') {
+  //       window.location.href = "/confirm"
+  //     }
+  //     console.log("Errors: ")
+  //     console.log(error.message)
+  //     console.log("Done showing errors")
+  //     setErrors(error.message)
+  //   }
+  //   return false
+  // } 
 
   const email_onchange = (event) => {
     setEmail(event.target.value);
