@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 // [TODO] Authenication
 //import Cookies from 'js-cookie'
 //import { Auth } from 'aws-amplify'
-import { signIn } from 'aws-amplify/auth';
+import { signIn , fetchUserAttributes } from 'aws-amplify/auth';
 
 
 export default function SigninPage() {
@@ -14,7 +14,7 @@ export default function SigninPage() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [errors, setErrors] = React.useState('');
-  //const [cognitoErrors, setCognitoErrors] = React.useState('');
+  const [cognitoErrors, setCognitoErrors] = React.useState('');
 
 
 
@@ -22,24 +22,31 @@ export default function SigninPage() {
     setErrors('')
     event.preventDefault();
 
+    try {
+      const signInResult = await signIn({ username, password });
     
       try {
-        const { username, userId, signInDetails } = await getCurrentUser();
-        console.log(`The username: ${username}`);
-        console.log(`The userId: ${userId}`);
-        console.log(`The signInDetails: ${signInDetails}`);
-      } catch (err) {
-        console.log(err);
+        const userAttributes = await fetchUserAttributes();
+        console.log(userAttributes);
+      } catch (error) {
+        console.log("Error fetching user attributes:", error);
+        // Handle the error appropriately
       }
+    
+      // Handle signInResult if applicable (e.g., check isSignedIn)
+    
+    } catch (error) {
+      console.log("Error signing in:", error);
+    
+      if (error.code === "UserNotConfirmedException") {
+        window.location.href = "/confirm";
+      } else {
+        setCognitoErrors(error.message);
+      }
+    }
 
-    // try {
-    //   const { isSignedIn, nextStep } = await signIn({ email, password });
-    // } catch (error) {
-    //   console.log('error signing in', error);
-    //   if (error.code == 'UserNotConfirmedException') {
-    //           window.location.href = "/confirm"
-    //         }
-    // }
+
+    return false
   }
 
 
@@ -73,8 +80,8 @@ export default function SigninPage() {
   }
 
   let el_errors;
-  if (errors){
-    el_errors = <div className='errors'>{errors}</div>;
+  if (cognitoErrors){
+    el_errors = <div className='errors'>{cognitoErrors}</div>;
   }
 
   return (

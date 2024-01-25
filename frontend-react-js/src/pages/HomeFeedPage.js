@@ -67,7 +67,11 @@ try {
     console.log(`The userId: ${currentUser.userId}`);
     console.log(`The signInDetails: ${currentUser.signInDetails}`);
 
-    //let cognito_user = currentUser;
+    let cognito_user = currentUser;
+    setUser({
+      display_name: cognito_user.attributes.name,
+      handle: cognito_user.attributes.preferred_username
+    })
 
     } catch (err){
       console.log(err)

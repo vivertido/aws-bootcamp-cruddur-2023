@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 // [TODO] Authenication
 //import { Auth } from 'aws-amplify'
+import { signUp} from 'aws-amplify/auth';
 
 
 export default function SignupPage() {
@@ -15,11 +16,40 @@ export default function SignupPage() {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [errors, setErrors] = React.useState('');
+  const [cognitoErrors, setCognitoErrors] = React.useState('');
+
 
   const onsubmit = async (event) => {
     event.preventDefault();
     setErrors('')
     console.log('SignupPage.onsubmit')
+
+    try {
+      const { isSignUpComplete, userId, nextStep } = await signUp({
+        username,
+        password,
+        options: {
+          userAttributes: {
+            name: name,
+            email: email,
+            preferred_username: username,
+           // phone_number // E.164 number convention
+          },
+          // optional
+          autoSignIn: true // or SignInOptions e.g { authFlowType: "USER_SRP_AUTH" }
+
+        }
+      });
+      console.log(userId+ " " + username);
+      window.location.href = `/confirm?email=${email}&username=${username}`
+    } catch (error) {
+      console.log('error signing up:', error);
+      setCognitoErrors(error.message)
+    }
+
+
+
+
     // [TODO] Authenication
 
   //   try {
@@ -66,8 +96,8 @@ export default function SignupPage() {
   }
 
   let el_errors;
-  if (errors){
-    el_errors = <div className='errors'>{errors}</div>;
+  if (cognitoErrors){
+    el_errors = <div className='errors'>{cognitoErrors}</div>;
   }
 
   return (
