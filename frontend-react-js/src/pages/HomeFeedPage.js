@@ -1,3 +1,4 @@
+
 import './HomeFeedPage.css';
 import React from "react";
 
@@ -6,7 +7,8 @@ import DesktopSidebar     from '../components/DesktopSidebar';
 import ActivityFeed from '../components/ActivityFeed';
 import ActivityForm from '../components/ActivityForm';
 import ReplyForm from '../components/ReplyForm';
-import { Auth } from 'aws-amplify';
+//import { Auth } from 'aws-amplify';
+import { getCurrentUser } from 'aws-amplify/auth';
 // [TODO] Authenication
 //import Cookies from 'js-cookie'
 
@@ -39,23 +41,55 @@ export default function HomeFeedPage() {
     }
   };
 
+
+/*
+
+try {
+    const { username, userId, signInDetails } = await getCurrentUser();
+    console.log(`The username: ${username}`);
+    console.log(`The userId: ${userId}`);
+    console.log(`The signInDetails: ${signInDetails}`);
+  } catch (err) {
+    console.log(err);
+  }
+
+*/
+
+
   const checkAuth = async () => {
-    Auth.currentAuthenticatedUser({
-      // Optional, By default is false. 
-      // If set to true, this call will send a 
-      // request to Cognito to get the latest user data
-      bypassCache: false 
-    })
-    .then((user) => {
-      console.log('user',user);
-      return Auth.currentAuthenticatedUser()
-    }).then((cognito_user) => {
-        setUser({
-          display_name: cognito_user.attributes.name,
-          handle: cognito_user.attributes.preferred_username
-        })
-    })
-    .catch((err) => console.log(err));
+
+    console.log("checkAuth...")
+    try{
+    let currentUser = await getCurrentUser();
+    console.log("The Current User in: ");
+    console.log(currentUser);
+    console.log(`The username: ${currentUser.username}`);
+    console.log(`The userId: ${currentUser.userId}`);
+    console.log(`The signInDetails: ${currentUser.signInDetails}`);
+
+    //let cognito_user = currentUser;
+
+    } catch (err){
+      console.log(err)
+      console.log("The User is not yet Authenticated.")
+
+    }
+    // Auth.currentAuthenticatedUser({
+    //   // Optional, By default is false. 
+    //   // If set to true, this call will send a 
+    //   // request to Cognito to get the latest user data
+    //   bypassCache: false 
+    // })
+    // .then((user) => {
+    //   console.log('user',user);
+    //   return Auth.currentAuthenticatedUser()
+    // }).then((cognito_user) => {
+    //     setUser({
+    //       display_name: cognito_user.attributes.name,
+    //       handle: cognito_user.attributes.preferred_username
+    //     })
+    // })
+    // .catch((err) => console.log(err));
   };
 
   React.useEffect(()=>{
