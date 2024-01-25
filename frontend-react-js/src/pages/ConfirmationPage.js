@@ -27,6 +27,7 @@ export default function ConfirmationPage() {
 
   const code_onchange = (event) => {
     setCode(event.target.value);
+    console.log(code);
   }
   const email_onchange = (event) => {
     setEmail(event.target.value);
@@ -52,7 +53,7 @@ export default function ConfirmationPage() {
     console.log('ConfirmationPage.onsubmit')
     setCognitoErrors('')
     // [TODO] Authenication
-
+    console.log("The confirmation code is: " + code);
     try {
       const { isSignUpComplete, nextStep } = await confirmSignUp({
         username,
