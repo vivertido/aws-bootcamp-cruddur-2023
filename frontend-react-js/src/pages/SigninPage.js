@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 // [TODO] Authenication
 //import Cookies from 'js-cookie'
-import { Auth } from 'aws-amplify'
+//import { Auth } from 'aws-amplify'
 import { signIn } from 'aws-amplify/auth';
 
 
@@ -21,14 +21,25 @@ export default function SigninPage() {
   async function onsubmit(event, { username, password }) {
     setErrors('')
     event.preventDefault();
-    try {
-      const { isSignedIn, nextStep } = await signIn({ email, password });
-    } catch (error) {
-      console.log('error signing in', error);
-      if (error.code == 'UserNotConfirmedException') {
-              window.location.href = "/confirm"
-            }
-    }
+
+    
+      try {
+        const { username, userId, signInDetails } = await getCurrentUser();
+        console.log(`The username: ${username}`);
+        console.log(`The userId: ${userId}`);
+        console.log(`The signInDetails: ${signInDetails}`);
+      } catch (err) {
+        console.log(err);
+      }
+
+    // try {
+    //   const { isSignedIn, nextStep } = await signIn({ email, password });
+    // } catch (error) {
+    //   console.log('error signing in', error);
+    //   if (error.code == 'UserNotConfirmedException') {
+    //           window.location.href = "/confirm"
+    //         }
+    // }
   }
 
 
