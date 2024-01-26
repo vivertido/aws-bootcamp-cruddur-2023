@@ -8,7 +8,7 @@ import ActivityFeed from '../components/ActivityFeed';
 import ActivityForm from '../components/ActivityForm';
 import ReplyForm from '../components/ReplyForm';
 //import { Auth } from 'aws-amplify';
-import { getCurrentUser, Auth } from 'aws-amplify/auth';
+import { getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
 // [TODO] Authenication
 //import Cookies from 'js-cookie'
 
@@ -20,7 +20,7 @@ export default function HomeFeedPage() {
   const [user, setUser] = React.useState(null);
   const dataFetchedRef = React.useRef(false);
   
-  
+  getCurrentUser
 
   const loadData = async () => {
     console.log("Loading data in Home Feed Page.")
@@ -60,43 +60,38 @@ try {
 
     console.log("checkAuth...")
 
-    Auth.fetchAuthSession()
-  .then(session => {
-    if (session) {
-      // User is authenticated
-      const userId = session.user.username; // Get user ID from session
-      console.log("Current user ID:", userId);
-      // Use userId with getUserAttributes if needed
-    } else {
-      // User is not authenticated
-      console.log("User is not authenticated");
-    }
-  })
-  .catch(error => {
-    console.error("Error fetching auth session:", error);
-  });
-
-
-
-    // try{
-    // let currentUser = await getCurrentUser();
   
-    // console.log(`The username: ${currentUser.username}`);
-    // console.log(`The userId: ${currentUser.userId}`);
-    // //console.log(`The signInDetails: ${currentUser.signInDetails}`);
-    // console.log( Object.keys(currentUser));
 
-    // let cognito_user = currentUser;
-    // setUser({
-    //   display_name: cognito_user.attributes.name,
-    //   handle: cognito_user.attributes.preferred_username
-    // })
 
-    // } catch (err){
-    //   console.log(err)
-    //   console.log("The User is not yet Authenticated.")
+    try{
+    let currentUser = await getCurrentUser();
+  
+    console.log(`The username: ${currentUser.username}`);
+    console.log(`The userId: ${currentUser.userId}`);
+    //console.log(`The signInDetails: ${currentUser.signInDetails}`);
+    console.log( Object.keys(currentUser));
 
-    // }
+     try {
+      const userAttributes = await fetchUserAttributes();
+      console.log("authenticated user Attributes:")
+      console.log(userAttributes);
+
+     }catch(err){
+
+      console.log("Error fetchingUserAttributes: " + err)
+     }
+
+    let cognito_user = currentUser;
+    setUser({
+      display_name: cognito_user.attributes.name,
+      handle: cognito_user.attributes.preferred_username
+    })
+
+    } catch (err){
+      console.log(err)
+      console.log("The User is not yet Authenticated.")
+
+    }
 
 
 
