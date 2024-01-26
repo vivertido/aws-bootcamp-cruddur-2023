@@ -3,7 +3,10 @@ import React from "react";
 import { useParams, useSearchParams } from 'react-router-dom';
 
 import {ReactComponent as Logo} from '../components/svg/logo.svg';
-import { confirmSignUp } from 'aws-amplify/auth';
+import { confirmSignUp, 
+        resendSignUpCode, 
+        ResendSignUpCodeInput, 
+        ResendSignUpCodeOutput  } from 'aws-amplify/auth';
 
 
 // [TODO] Authenication
@@ -13,7 +16,7 @@ import { confirmSignUp } from 'aws-amplify/auth';
 
 export default function ConfirmationPage() {
   const [email, setEmail] = React.useState('');
-  const [code, setCode] = React.useState('');
+  const [confirmationCode, setCode] = React.useState('');
   const [errors, setErrors] = React.useState('');
   const [cognitoErrors, setCognitoErrors] = React.useState('');
    
@@ -27,7 +30,7 @@ export default function ConfirmationPage() {
 
   const code_onchange = (event) => {
     setCode(event.target.value);
-    console.log(code);
+    console.log(confirmationCode);
   }
   const email_onchange = (event) => {
     setEmail(event.target.value);
@@ -37,13 +40,15 @@ export default function ConfirmationPage() {
     console.log('resend_code')
     setCognitoErrors('')
     // [TODO] Authenication
+    try {
+      const res = await resendSignUpCode({ username });
+      console.log('Code resent successfully:', res);
+    } catch (error) {
+      console.error('Error resending code:', error);
+      // Handle the error appropriately
+    }
 
     
-
-
-
-
-
 
 
   }
@@ -53,11 +58,11 @@ export default function ConfirmationPage() {
     console.log('ConfirmationPage.onsubmit')
     setCognitoErrors('')
     // [TODO] Authenication
-    console.log("The confirmation code is: " + code);
+    console.log("The confirmation code is: " + confirmationCode);
     try {
       const { isSignUpComplete, nextStep } = await confirmSignUp({
         username,
-        code
+        confirmationCode,
       });
       window.location.href = "/"
     } catch (error) {
@@ -135,7 +140,7 @@ export default function ConfirmationPage() {
               <label>Confirmation Code</label>
               <input
                 type="text"
-                value={code}
+                value={confirmationCode}
                 onChange={code_onchange} 
               />
             </div>
