@@ -8,7 +8,7 @@ import ActivityFeed from '../components/ActivityFeed';
 import ActivityForm from '../components/ActivityForm';
 import ReplyForm from '../components/ReplyForm';
 //import { Auth } from 'aws-amplify';
-import { getCurrentUser } from 'aws-amplify/auth';
+import { getCurrentUser, Auth } from 'aws-amplify/auth';
 // [TODO] Authenication
 //import Cookies from 'js-cookie'
 
@@ -59,25 +59,48 @@ try {
   const checkAuth = async () => {
 
     console.log("checkAuth...")
-    try{
-    let currentUser = await getCurrentUser();
-    console.log("The Current User in: ");
-    console.log(currentUser);
-    console.log(`The username: ${currentUser.username}`);
-    console.log(`The userId: ${currentUser.userId}`);
-    console.log(`The signInDetails: ${currentUser.signInDetails}`);
 
-    let cognito_user = currentUser;
-    setUser({
-      display_name: cognito_user.attributes.name,
-      handle: cognito_user.attributes.preferred_username
-    })
-
-    } catch (err){
-      console.log(err)
-      console.log("The User is not yet Authenticated.")
-
+    Auth.fetchAuthSession()
+  .then(session => {
+    if (session) {
+      // User is authenticated
+      const userId = session.user.username; // Get user ID from session
+      console.log("Current user ID:", userId);
+      // Use userId with getUserAttributes if needed
+    } else {
+      // User is not authenticated
+      console.log("User is not authenticated");
     }
+  })
+  .catch(error => {
+    console.error("Error fetching auth session:", error);
+  });
+
+
+
+    // try{
+    // let currentUser = await getCurrentUser();
+  
+    // console.log(`The username: ${currentUser.username}`);
+    // console.log(`The userId: ${currentUser.userId}`);
+    // //console.log(`The signInDetails: ${currentUser.signInDetails}`);
+    // console.log( Object.keys(currentUser));
+
+    // let cognito_user = currentUser;
+    // setUser({
+    //   display_name: cognito_user.attributes.name,
+    //   handle: cognito_user.attributes.preferred_username
+    // })
+
+    // } catch (err){
+    //   console.log(err)
+    //   console.log("The User is not yet Authenticated.")
+
+    // }
+
+
+
+
     // Auth.currentAuthenticatedUser({
     //   // Optional, By default is false. 
     //   // If set to true, this call will send a 

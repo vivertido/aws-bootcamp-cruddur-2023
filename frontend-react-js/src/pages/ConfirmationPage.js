@@ -48,8 +48,7 @@ export default function ConfirmationPage() {
       // Handle the error appropriately
     }
 
-    
-
+  
 
   }
 
@@ -71,27 +70,6 @@ export default function ConfirmationPage() {
 
     }
 
-
-
-
-
-
-
-
-    // if (Cookies.get('user.email') === undefined || Cookies.get('user.email') === '' || Cookies.get('user.email') === null){
-    //   setErrors("You need to provide an email in order to send Resend Activiation Code")   
-    // } else {
-    //   if (Cookies.get('user.email') === email){
-    //     if (Cookies.get('user.confirmation_code') === code){
-    //       Cookies.set('user.logged_in',true)
-    //       window.location.href = "/"
-    //     } else {
-    //       setErrors("Code is not valid")
-    //     }
-    //   } else {
-    //     setErrors("Email is invalid or cannot be found.")   
-    //   }
-    // }
     return false
   }
 

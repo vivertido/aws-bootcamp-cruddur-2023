@@ -9,68 +9,90 @@ import { Link } from "react-router-dom";
 import { signIn , fetchUserAttributes } from 'aws-amplify/auth';
 
 
+
 export default function SigninPage() {
 
+  let signInStatus = "Idle";
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [errors, setErrors] = React.useState('');
+  
   const [cognitoErrors, setCognitoErrors] = React.useState('');
 
-
-
-  async function onsubmit(event, { username, password }) {
-    setErrors('')
+  async function onsubmit(event) {
+    setCognitoErrors('');
     event.preventDefault();
-
+    signInStatus = "Logging in..."
+  
     try {
-      const signInResult = await signIn({ username, password });
-    
+      let username = email;
+      const { isSignedIn, nextStep } = await signIn({ username, password });
+      console.log("is signedIn: " + isSignedIn);
+      console.log("next step: " + nextStep);
+
       try {
-        const userAttributes = await fetchUserAttributes();
-        console.log(userAttributes);
-      } catch (error) {
-        console.log("Error fetching user attributes:", error);
-        // Handle the error appropriately
+              const userAttributes = await fetchUserAttributes();
+              console.log("User Attributes: ")
+              console.log(userAttributes);
+            } catch (error) {
+              console.log("Error fetching user attributes:", error);
+              // Handle the error appropriately
+            }
+
+  
+      // Redirect to confirmation page only if necessary and exit the function
+      if (!isSignedIn && error.code === "UserNotConfirmedException") {
+        window.location.href = "/confirm";
+        return;
       }
-    
-      // Handle signInResult if applicable (e.g., check isSignedIn)
-    
+  
+      // Handle successful sign-in or other errors here
     } catch (error) {
       console.log("Error signing in:", error);
-    
-      if (error.code === "UserNotConfirmedException") {
-        window.location.href = "/confirm";
-      } else {
-        setCognitoErrors(error.message);
-      }
+      setCognitoErrors(error.message);
     }
-
-
-    return false
+  
+    return false;
   }
 
-
-  // const onsubmit = async (event) => {
+  // async function onsubmit(event, { username, password }) {
   //   setErrors('')
   //   event.preventDefault();
+
+
+
+  //     // const signInResult = await signIn({ username, password });
+  //     // console.log("Signin result: ")
+  //     // console.log(signInResult)
+     
+  //     // try {
+  //     //   const userAttributes = await fetchUserAttributes();
+  //     //   console.log("User Attributes: ")
+  //     //   console.log(userAttributes);
+  //     // } catch (error) {
+  //     //   console.log("Error fetching user attributes:", error);
+  //     //   // Handle the error appropriately
+  //     // }
+    
+  //     // Handle signInResult if applicable (e.g., check isSignedIn)
   //   try {
-  //     Auth.signIn(email, password)
-  //       .then(user => {
-  //         localStorage.setItem("access_token", user.signInUserSession.accessToken.jwtToken)
-  //         window.location.href = "/"
-  //       })
-  //       .catch(err => { console.log('Error!', err) });
+  //       const { isSignedIn, nextStep } = await signIn({ username, password });
+  //         console.log("is signedIn: " + isSignedIn);
+  //         console.log("next step: " +nextStep);
   //   } catch (error) {
-  //     if (error.code == 'UserNotConfirmedException') {
-  //       window.location.href = "/confirm"
+  //     console.log("Error signing in:", error);
+    
+  //     if (error.code === "UserNotConfirmedException") {
+  //       window.location.href = "/confirm";
+  //     } else {
+  //       setCognitoErrors(error.message);
   //     }
-  //     console.log("Errors: ")
-  //     console.log(error.message)
-  //     console.log("Done showing errors")
-  //     setErrors(error.message)
   //   }
+
+
   //   return false
-  // } 
+  // }
+
+
 
   const email_onchange = (event) => {
     setEmail(event.target.value);
@@ -84,6 +106,8 @@ export default function SigninPage() {
     el_errors = <div className='errors'>{cognitoErrors}</div>;
   }
 
+  
+  
   return (
     <article className="signin-article">
       <div className='signin-info'>
@@ -118,8 +142,9 @@ export default function SigninPage() {
             <Link to="/forgot" className="forgot-link">Forgot Password?</Link>
             
             <button type='submit'>Sign In</button>
-          </div>
 
+          </div>
+          <div className='errors'>Status:{signInStatus}</div>
         </form>
         <div className="dont-have-an-account">
           <span>
