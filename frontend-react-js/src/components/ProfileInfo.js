@@ -24,6 +24,8 @@ export default function ProfileInfo(props) {
     // }
     try {
       await signOut();
+      window.location.href = "/"
+      console.log("Signing out..");
     } catch (error) {
       console.log('error signing out: ', error);
     }
