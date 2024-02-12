@@ -112,10 +112,12 @@ def data_create_message():
   return
 
 @app.route("/api/activities/home", methods=['GET'])
+@xray_recorder.capture('activites_home')
 def data_home():
   data = HomeActivities.run()
   LOGGER.info('Hello Cloudwatch! from  /api/activities/home')
-  rollbar.report_message('HI HONEY Im HOME!', 'info')
+  rollbar.report_message('HI HONEY Im HOME !', 'info')
+
    
   return data, 200
 
