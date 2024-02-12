@@ -2,6 +2,9 @@ import './RecoverPage.css';
 import React from "react";
 import {ReactComponent as Logo} from '../components/svg/logo.svg';
 import { Link } from "react-router-dom";
+import { resetPassword , confirmResetPassword} from 'aws-amplify/auth';
+ 
+
 
 export default function RecoverPage() {
   // Username is Eamil
@@ -15,11 +18,66 @@ export default function RecoverPage() {
   const onsubmit_send_code = async (event) => {
     event.preventDefault();
     console.log('onsubmit_send_code')
+    setErrors('')
+
+    try {
+      const output = await resetPassword({ username });
+      setFormState('confirm_code')
+      handleResetPasswordNextSteps(output);
+    } catch (error) {
+      console.log(error);
+      setErrors(error.message);
+    }
+
+
+  //   Auth.forgotPassword(username)
+  // .then((data) => setFormState('confirm_code') )
+  // .catch((err) => setCognitoErrors(err.message) );
+
+
     return false
   }
+
+  function handleResetPasswordNextSteps(output) {
+    const { nextStep } = output;
+    switch (nextStep.resetPasswordStep) {
+      case 'CONFIRM_RESET_PASSWORD_WITH_CODE':
+        const codeDeliveryDetails = nextStep.codeDeliveryDetails;
+        console.log(
+          `Confirmation code was sent to ${codeDeliveryDetails.deliveryMedium}`
+        );
+        // Collect the confirmation code from the user and pass to confirmResetPassword.
+        break;
+      case 'DONE':
+        console.log('Successfully reset password.');
+
+        break;
+    }
+  }
+
+
+
   const onsubmit_confirm_code = async (event) => {
     event.preventDefault();
     console.log('onsubmit_confirm_code')
+    setErrors('')
+
+    if (password == passwordAgain){
+      let newPassword = password;
+      let confirmationCode = code;
+      try {
+        await confirmResetPassword({ username, confirmationCode, newPassword });
+        setFormState('success')
+
+      } catch (error) {
+        console.log(error);
+      }
+
+    } else {
+
+      setErrors("Your passwords don't match")
+    }
+
     return false
   }
 
