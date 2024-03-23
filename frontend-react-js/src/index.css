@@ -1,8 +1,19 @@
+:root {
+
+--primary-color: #d97652;
+--secondary-color: #6E7346;
+--background: #1C2621;
+--primary-light : #f2f0d5;
+--secondary-light: #bfbda3;
+}
+
+
+
 * { box-sizing: border-box; }
 html,body { 
   height: 100%; 
   width: 100%; 
-  background: rgb(14,3,28);
+  background: var(--background);
 }
 
 body {
